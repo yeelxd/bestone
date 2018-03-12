@@ -1,9 +1,31 @@
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/bestone?useSSL=false
+    url: jdbc:mysql://localhost:3306/bestone?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull
     username: root
     password: root
+    # 使用druid数据源
+    druid:
+      initial-size: 2
+      max-active: 20
+      min-idle: 2
+      max-wait: 60000
+      initialSize: 5
+      pool-prepared-statements: true
+      max-open-prepared-statements: 20
+      validation-query: select 'x'
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      time-between-eviction-runs-millis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      min-evictable-idle-time-millis: 25200000
+      filters: stat,wall,log4j2
+
+mybatis:
+  mapper-locations: classpath:mapping/*.xml
+  type-aliases-package: com.yglbs.model
 
 server:
   port: 8088

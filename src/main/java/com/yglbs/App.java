@@ -2,6 +2,7 @@ package com.yglbs;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -13,6 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @date 2018-02-28
  */
 @SpringBootApplication
+@MapperScan("com.yglbs.mapper")
 public class App {
 
     private static Logger logger = LogManager.getLogger(App.class);
