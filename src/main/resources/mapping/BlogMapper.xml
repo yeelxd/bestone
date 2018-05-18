@@ -3,7 +3,7 @@
 <mapper namespace="com.yglbs.mapper.BlogMapper">
     <!--auto generated Code-->
     <resultMap id="AllColumnMap" type="blog">
-        <result column="id" property="id" />
+        <result column="bid" property="bid" />
         <result column="author" property="author" />
         <result column="title" property="title"/>
         <result column="content" property="content"/>
@@ -11,12 +11,12 @@
 
     <!--auto generated Code-->
     <sql id="all_column">
-        id, author, title, content
+        bid, author, title, content
     </sql>
 
-    <select id="getBlogById" resultMap="AllColumnMap" parameterType="int">
+    <select id="getBlogByBid" resultMap="AllColumnMap" parameterType="int">
         select
         <include refid="all_column" />
-        from tb_blog where id = #{id}
+        from tb_blog where bid = #{bid}
     </select>
 </mapper>

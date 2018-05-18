@@ -6,24 +6,24 @@ package com.yglbs.model;
  * @date 2018-03-01
  */
 public class Blog {
-    private Long id;
+    private Long bid;
     private String author;
     private String title;
     private String content;
 
-    public Blog(Long id, String author, String title, String content) {
-        this.id = id;
+    public Blog(Long bid, String author, String title, String content) {
+        this.bid = bid;
         this.author = author;
         this.title = title;
         this.content = content;
     }
 
-    public Long getId() {
-        return id;
+    public Long getBid() {
+        return bid;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setBid(Long bid) {
+        this.bid = bid;
     }
 
     public String getAuthor() {
@@ -53,7 +53,7 @@ public class Blog {
     @Override
     public String toString() {
         return "Blog{" +
-                "id=" + id +
+                "bid=" + bid +
                 ", author='" + author + '\'' +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +

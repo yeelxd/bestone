@@ -17,7 +17,7 @@ public class BlogServiceImpl implements BlogService {
     private BlogMapper blogMapper;
 
     @Override
-    public Blog getBlogById(Integer id) {
-        return blogMapper.getBlogById(id);
+    public Blog getBlogByBid(Integer id) {
+        return blogMapper.getBlogByBid(id);
     }
 }
