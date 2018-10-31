@@ -28,4 +28,4 @@ mybatis:
   type-aliases-package: com.yglbs.model
 
 server:
-  port: 8088
+  port: 8899
