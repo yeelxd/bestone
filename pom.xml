@@ -44,6 +44,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <!-- Junit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
         <!-- Hot Restart -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -121,13 +128,13 @@
             <artifactId>jsch</artifactId>
             <version>0.1.54</version>
         </dependency>
-        <!-- Junit -->
+        <!-- httpclient -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.10</version>
         </dependency>
+
     </dependencies>
 
     <build>
