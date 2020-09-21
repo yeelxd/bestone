@@ -26,27 +26,40 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * Http请求方法类
+ * @author liuxd
+ */
 public class HttpHelper {
 
-	// get 请求
+	private static final Logger log = LoggerFactory.getLogger(HttpHelper.class);
+
+	/**
+	 * get 请求
+	 */
 	public static String httpGet(String url, Header[] headers) {
 		HttpUriRequest uriRequest = new HttpGet(url);
-		if (null != headers)
+		if (null != headers){
 			uriRequest.setHeaders(headers);
-		try (CloseableHttpClient httpClient = declareHttpClientSSL(url)) {
+		}
+		try (CloseableHttpClient httpClient = declareHttpClientSsl(url)) {
 			CloseableHttpResponse httpresponse = httpClient.execute(uriRequest);
 			HttpEntity httpEntity = httpresponse.getEntity();
 			return EntityUtils.toString(httpEntity, REQ_ENCODEING_UTF8);
 		} catch (ClientProtocolException e) {
-			out.println(String.format("http请求失败，uri{%s},exception{%s}", url, e));
+			log.info("http请求失败，uri{},exception{}", url, e);
 		} catch (IOException e) {
-			out.println(String.format("IO Exception，uri{%s},exception{%s}", url, e));
+			log.info("IO Exception，uri{},exception{}", url, e);
 		}
 		return null;
 	}
 
-	// post 请求
+	/**
+	 * post 请求
+	 */
 	public static String httpPost(String url, String params) {
 		HttpPost post = new HttpPost(url);
 		post.addHeader("Content-Type", "application/json;charset=" + REQ_ENCODEING_UTF8);
@@ -55,19 +68,19 @@ public class HttpHelper {
 		stringEntity.setContentEncoding(REQ_ENCODEING_UTF8);
 		post.setEntity(stringEntity);
 		HttpResponse httpresponse;
-		try (CloseableHttpClient httpClient = declareHttpClientSSL(url)) {
+		try (CloseableHttpClient httpClient = declareHttpClientSsl(url)) {
 			httpresponse = httpClient.execute(post);
 			HttpEntity httpEntity = httpresponse.getEntity();
 			return EntityUtils.toString(httpEntity, REQ_ENCODEING_UTF8);
 		} catch (ClientProtocolException e) {
-			out.println(String.format("http请求失败，uri{%s},exception{%s}", url, e));
+			log.info("http请求失败，uri{},exception{}", url, e);
 		} catch (IOException e) {
-			out.println(String.format("IO Exception，uri{%s},exception{%s}", url, e));
+			log.info("IO Exception，uri{},exception{}", url, e);
 		}
 		return null;
 	}
 
-	private static CloseableHttpClient declareHttpClientSSL(String url) {
+	private static CloseableHttpClient declareHttpClientSsl(String url) {
 		if (url.startsWith("https://")) {
 			return sslClient();
 		} else {
@@ -82,13 +95,14 @@ public class HttpHelper {
 		try {
 			SSLContext ctx = SSLContext.getInstance("TLS");
 			X509TrustManager tm = new X509TrustManager() {
+				@Override
 				public X509Certificate[] getAcceptedIssuers() {
 					return null;
 				}
-
+				@Override
 				public void checkClientTrusted(X509Certificate[] xcs, String str) {
 				}
-
+				@Override
 				public void checkServerTrusted(X509Certificate[] xcs, String str) {
 				}
 			};
@@ -100,7 +114,6 @@ public class HttpHelper {
 		}
 	}
 
-	// this is config
 	private static final String REQ_ENCODEING_UTF8 = "utf-8";
 	private static PoolingHttpClientConnectionManager httpClientConnectionManager;
 
@@ -110,7 +123,6 @@ public class HttpHelper {
 		httpClientConnectionManager.setDefaultMaxPerRoute(20);
 	}
 
-	// get 请求
 	public static String httpGet(String url) {
 		return httpGet(url, null);
 	}

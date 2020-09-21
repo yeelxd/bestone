@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,7 +20,7 @@ import java.nio.file.Paths;
  */
 public class FileUtil {
 
-	private static Logger log = LogManager.getLogger(FileUtil.class);
+	private static final Logger log = LogManager.getLogger(FileUtil.class);
 	
 	/**
 	  * 保存文件到磁盘
@@ -33,7 +34,7 @@ public class FileUtil {
 			if (Files.notExists(dir)) {
 				Files.createDirectories(dir);
 			}
-			Files.write(path, dataXml.getBytes("UTF-8"));
+			Files.write(path, dataXml.getBytes(StandardCharsets.UTF_8));
 		} catch (Exception e) {
 			throw new MessageException("saveDataFile Error dataType:"+dataType+", dataXml:" + dataXml, e);
 		} 
@@ -43,7 +44,7 @@ public class FileUtil {
 	/**
 	 * 获取资源的URL
 	 */
-	public static URL getResourceURL(String path) {
+	public static URL getResourceUrl(String path) {
 		return FileUtil.class.getClassLoader().getResource(path);
 	}
 	
@@ -64,7 +65,7 @@ public class FileUtil {
 
 			//写入文件
             RandomAccessFile randomFile = new RandomAccessFile(fileName, "rw");
-			randomFile.write(content.getBytes("UTF-8"));
+			randomFile.write(content.getBytes(StandardCharsets.UTF_8));
 			randomFile.close();
 
 		} catch (IOException e) {
@@ -84,7 +85,7 @@ public class FileUtil {
 				throw new MessageException(OsCommon.ErrCode.CODE_999, "file is not exists..["+filePath+"]");
 			}
 			//转为字符形式读取
-			BufferedReader br=new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8")); 
+			BufferedReader br=new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
 			String str;
 			while((str=br.readLine())!=null){
 				content.append(str);
@@ -134,9 +135,9 @@ public class FileUtil {
 		if(file.exists() && file.isDirectory()){
 		    try{
                 String[] children = file.list();
-                if(!OsTool.isNull(children)){
+                if(children!=null&&!OsTool.isNull(children)){
                     //递归删除目录中的子目录下
-                    for(String child : children){
+					for(String child : children){
                         boolean flag=FileUtil.forceDeleteFile(filePath.concat(File.separator).concat(child));
                         if(!flag){
                             break;

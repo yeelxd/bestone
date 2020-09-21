@@ -21,10 +21,11 @@ import com.alibaba.fastjson.JSONObject;
 
 /**
  * CSV操作(导出和导入)
+ * @author liuxd
  */
 public class CsvUtil {
 
-	private static Logger log = LoggerFactory.getLogger(CsvUtil.class);
+	private static final Logger log = LoggerFactory.getLogger(CsvUtil.class);
 	
 	/**
 	 * 导出CSV文件
@@ -52,7 +53,7 @@ public class CsvUtil {
 			
 			//添加标题行
 			String[] headerArray=headerFields.split(",");
-			List<String> titleList=new ArrayList<String>();
+			List<String> titleList= new ArrayList<>();
 			for(String header : headerArray){
                 for (Map<String, Object> smMap : smList) {
                     if (OsTool.equals(header, (String) smMap.get("DBFIELD"))) {
@@ -61,30 +62,30 @@ public class CsvUtil {
                     }
                 }
 			}
-			StringBuffer headerTitleSB=new StringBuffer();
+			StringBuffer headerTitleSb=new StringBuffer();
 			for(Iterator<String> iter=titleList.iterator(); iter.hasNext(); ){
-				headerTitleSB.append(iter.next());
+				headerTitleSb.append(iter.next());
 				if(iter.hasNext()){
-					headerTitleSB.append(",");
+					headerTitleSb.append(",");
 				}
 			}
-			bw.append(headerTitleSB);
+			bw.append(headerTitleSb);
 			bw.newLine();
 					
 			//添加数据行
 		    for(int i=0; i<dataArray.size(); i++){
-		    	StringBuffer dataSB=new StringBuffer();
+		    	StringBuffer datasb=new StringBuffer();
 		    	JSONObject jsonObj=(JSONObject)dataArray.get(i);
 				for(int j=0 ;j<headerArray.length; j++){
 					String header=headerArray[j];
 					//替换掉所有空格
 					String dataValue=jsonObj.getString(header);
-					dataSB.append("\"").append(dataValue).append("\"");
+					datasb.append("\"").append(dataValue).append("\"");
 					if(j<headerArray.length-1){
-						dataSB.append(",");
+						datasb.append(",");
 					}
 				}
-				bw.append(dataSB);
+				bw.append(datasb);
 				if(i<dataArray.size()-1){
 					bw.newLine();
 				}
@@ -121,11 +122,11 @@ public class CsvUtil {
 	 * @param file CSV文件(路径+文件)
 	 */
 	public static List<String> csvDataToList(File file) {
-		List<String> dataList = new ArrayList<String>();
+		List<String> dataList = new ArrayList<>();
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(new FileReader(file));
-			String line = "";
+			String line;
 			while ((line = br.readLine()) != null) {
 				dataList.add(line);
 			}
@@ -146,7 +147,7 @@ public class CsvUtil {
 	
 	/**
 	 * 读取CSV文件的Title
-	 * @param file
+	 * @param file 文件
 	 */
 	public static List<String> readCsvTitle(File file, boolean isTrim){
 		List<String> titleList =null;
@@ -155,7 +156,7 @@ public class CsvUtil {
 			if(!OsTool.isNull(dataList)){
 				String titles=dataList.get(0);
 				String[] titleArray=titles.split(",");
-				titleList=new ArrayList<String>();
+				titleList= new ArrayList<>();
 				for(String title : titleArray){
 					if(isTrim){
 						title=OsTool.trimAll(title);
@@ -172,15 +173,15 @@ public class CsvUtil {
 	
 	/**
 	 * 转换CSV文件为List<Map>
-	 * @param file
+	 * @param file 文件名
 	 */
 	public static List<Map<String,String>> csvDataToListMap(File file, boolean isTrim) {
 		List<Map<String,String>> titleMapList=null;
 		try{
 			List<String> dataList=csvDataToList(file);
 			if(!OsTool.isNull(dataList) && dataList.size()>1){
-				titleMapList=new ArrayList<Map<String,String>>();
-				String[] titleArray=null;//标题行
+				titleMapList= new ArrayList<>();
+				String[] titleArray=null;
 				for(int i=0; i<dataList.size(); i++){
 					String[] dataArray=dataList.get(i).split(",");
 					if(i==0){
@@ -188,7 +189,7 @@ public class CsvUtil {
 						continue;
 					}
 					//开始封装数据
-					Map<String,String> dataMap=new HashMap<String,String>();
+					Map<String,String> dataMap= new HashMap<>(16);
 					for(int index=0; index<titleArray.length; index++){
 						String key=titleArray[index];
 						String value=dataArray[index];
