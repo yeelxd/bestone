@@ -19,7 +19,7 @@ import java.security.SecureRandom;
  */
 public class CustomizedMd5 {
 
-    private static Logger log = LogManager.getLogger(CustomizedMd5.class);
+    private static final Logger log = LogManager.getLogger(CustomizedMd5.class);
 
     private final static String DES = "DES";
 

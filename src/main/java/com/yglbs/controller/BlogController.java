@@ -31,13 +31,13 @@ public class BlogController {
         return "Greetings from Spring Boot!";
     }
 
-    @RequestMapping(value = "/blog/{id}", method = RequestMethod.GET)
-    public ResponseEntity<MessageVo> getBlogById(@PathVariable(value = "id") Integer id){
+    @RequestMapping(value = "/blog/{bid}", method = RequestMethod.GET)
+    public ResponseEntity<MessageVo> getBlogById(@PathVariable(value = "bid") Integer bid){
         MessageVo mvo=new MessageVo();
         mvo.setStatus(0);
         mvo.setMessage("Fail");
         try{
-            Blog blog=blogService.getBlogById(id);
+            Blog blog=blogService.getBlogByBid(bid);
             mvo.setStatus(1);
             mvo.setMessage("Success");
             mvo.setResult(blog.toString());

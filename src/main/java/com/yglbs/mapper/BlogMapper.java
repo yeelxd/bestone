@@ -14,10 +14,10 @@ public interface BlogMapper {
 
     /**
      * 根据ID查询博客
-     * //@Select("SELECT * FROM tb_blog t WHERE t.id= #{id}")
-     * @param id 主键
+     * //@Select("SELECT * FROM tb_blog t WHERE t.bid= #{bid}")
+     * @param bid 主键
      * @return Blog
      */
-    Blog getBlogById(Integer id);
+    Blog getBlogByBid(Integer bid);
 
 }

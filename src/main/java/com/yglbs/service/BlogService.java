@@ -14,5 +14,5 @@ public interface BlogService {
      * @param id 主键
      * @return Blog
      */
-    Blog getBlogById(Integer id);
+    Blog getBlogByBid(Integer id);
 }

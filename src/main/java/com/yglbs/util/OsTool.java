@@ -12,6 +12,7 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.sql.Blob;
 import java.text.ParseException;
@@ -27,7 +28,7 @@ import java.util.regex.Pattern;
  */
 public class OsTool {
 
-	private static Logger log = LogManager.getLogger(OsTool.class);
+	private static final Logger log = LogManager.getLogger(OsTool.class);
 
     /**
      * 连续多个空格的正则预编译
@@ -177,7 +178,7 @@ public class OsTool {
 	/**
 	 * 指定日期格式转换
 	 */
-	public static String formatGMTDate(Date source, String dateFormatSign) {
+	public static String formatGmtDate(Date source, String dateFormatSign) {
 		String str = null;
 		if (null != source) {
 			if(OsTool.equals(OsCommon.Status.D, dateFormatSign)){
@@ -197,7 +198,7 @@ public class OsTool {
 	/**
 	 * XML文档时间格式的转换
 	 */
-	public static Date parseXMLDate(String source) {
+	public static Date parseXmlDate(String source) {
 		Date date = null;
 		if (!isNull(source)) {
 			//默认14位
@@ -251,14 +252,10 @@ public class OsTool {
 	 */
 	public static String encodeBase64(String input) {
 		String result = "";
-		try {
-			if (!isNull(input)) {
-				result = (new sun.misc.BASE64Encoder()).encode(input.getBytes("UTF-8"));
-			}
-		} catch (UnsupportedEncodingException e) {
-			log.error("EncodeBase64加密失败", e);
+		if (!isNull(input)) {
+			result = (new sun.misc.BASE64Encoder()).encode(input.getBytes(StandardCharsets.UTF_8));
 		}
-		
+
 		return result;
 	}
 
@@ -271,7 +268,7 @@ public class OsTool {
 			try {
 				sun.misc.BASE64Decoder decoder = new sun.misc.BASE64Decoder();
 				byte[] b = decoder.decodeBuffer(input);
-				result = new String(b, "UTF-8");
+				result = new String(b, StandardCharsets.UTF_8);
 			} catch (IOException e) {
 				log.error("DecodeBase64转换失败", e);
 			}
@@ -283,7 +280,7 @@ public class OsTool {
 	/**
 	 * 生成UUID
 	 */
-	public static String getUUID() {
+	public static String getUuid() {
 		UUID uuid = UUID.randomUUID();
 		return uuid.toString();
 	}
@@ -297,10 +294,8 @@ public class OsTool {
 			char cur = voName.charAt(i);
 			if (Character.isUpperCase(cur)) {
 				sb.append("_");
-				sb.append(cur);
-			} else {
-				sb.append(cur);
 			}
+			sb.append(cur);
 		}
 
 		return sb.toString().toUpperCase();
@@ -341,7 +336,7 @@ public class OsTool {
     	String result = "";
         try {
         	MessageDigest md5 = MessageDigest.getInstance("MD5");            
-            byte[] byteArray = inStr.getBytes("UTF-8");
+            byte[] byteArray = inStr.getBytes(StandardCharsets.UTF_8);
             byte[] md5Bytes = md5.digest(byteArray);
             StringBuilder hexValue = new StringBuilder();
             for (byte bt : md5Bytes) {
@@ -448,12 +443,12 @@ public class OsTool {
 							if(!OsTool.isNull(tempV)){
 								tempV=tempV.replaceAll("/", "").replaceAll("-", "");
 								tempV=tempV.replaceAll(" ", "").replaceAll(":", "");
-								fieldValue=OsTool.parseXMLDate(tempV);
+								fieldValue=OsTool.parseXmlDate(tempV);
 							}
 		           		}else if(OsTool.equals("class java.math.BigDecimal", fieldType) 
 		           				 	|| OsTool.equals("java.math.BigDecimal", fieldType)){
 		           			if(!OsTool.isNull(tempV)){
-		           				fieldValue=BigDecimal.valueOf(Double.valueOf(tempV));
+		           				fieldValue=BigDecimal.valueOf(Double.parseDouble(tempV));
 		           			}
 		           		}else{
 		           			fieldValue=tempV;
@@ -489,7 +484,7 @@ public class OsTool {
 						if(OsTool.equals("class java.math.BigDecimal", fieldType) 
 									|| OsTool.equals("java.math.BigDecimal", fieldType)){
 							if(null != fieldValue){
-								fieldValue=BigDecimal.valueOf(Double.valueOf(fieldValue.toString()));
+								fieldValue=BigDecimal.valueOf(Double.parseDouble(fieldValue.toString()));
 							}
 						}else if(OsTool.equals("class java.lang.String", fieldType) 
 								|| OsTool.equals("java.lang.String", fieldType)){

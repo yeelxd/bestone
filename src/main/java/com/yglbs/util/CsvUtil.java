@@ -1,24 +1,36 @@
 package com.yglbs.util;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.io.*;
-import java.util.*;
 
 /**
  * CSV操作(导出和导入)
- * @author yeelxd
- * @date 2018-03-02
+ * @author liuxd
  */
 public class CsvUtil {
 
-    private static Logger log = LogManager.getLogger(CsvUtil.class);
+	private static final Logger log = LoggerFactory.getLogger(CsvUtil.class);
 	
 	/**
 	 * 导出CSV文件
+	 * @param fileName CSV文件(路径+文件名)
+	 * @param dataArray 数据
 	 */
 	public static void exportCsv(String headerFields, JSONArray dataArray,
 				List<Map<String, Object>> smList, String fileName) {
@@ -27,56 +39,53 @@ public class CsvUtil {
 		BufferedWriter bw = null;
 		try {
 			File file = new File(fileName);
-            if (!file.getParentFile().exists()) {
-                boolean isMkdir=file.getParentFile().mkdirs();
-                log.info("文件所在目录创建，{1}", isMkdir);
-            }
-            if(file.isFile() && file.exists()){
+			if(!file.getParentFile().exists()){
+				file.getParentFile().mkdirs();
+			}
+			if(file.exists()){
 				//先删除已存在的文件
-                boolean isDelete=file.delete();
-                log.info("对已存在文件删除，{1}", isDelete);
-            }
-            boolean isCreate=file.createNewFile();
-            log.info("创建新文件，{1}", isCreate);
+				file.delete();
+			}
+			file.createNewFile();
 			out = new FileOutputStream(file);
 			osw = new OutputStreamWriter(out);
 			bw = new BufferedWriter(osw);
 			
 			//添加标题行
 			String[] headerArray=headerFields.split(",");
-			List<String> titleList=new ArrayList<>();
+			List<String> titleList= new ArrayList<>();
 			for(String header : headerArray){
-				for(Map<String, Object> smMap : smList){
-					if(OsTool.equals(header, (String)smMap.get("DBFIELD"))){
-						titleList.add((String)smMap.get("ORIGINALFIELD"));
-						break;
-					}
-				}
+                for (Map<String, Object> smMap : smList) {
+                    if (OsTool.equals(header, (String) smMap.get("DBFIELD"))) {
+                        titleList.add((String) smMap.get("ORIGINALFIELD"));
+                        break;
+                    }
+                }
 			}
-			StringBuffer headerTitleSB=new StringBuffer();
+			StringBuffer headerTitleSb=new StringBuffer();
 			for(Iterator<String> iter=titleList.iterator(); iter.hasNext(); ){
-				headerTitleSB.append(iter.next());
+				headerTitleSb.append(iter.next());
 				if(iter.hasNext()){
-					headerTitleSB.append(",");
+					headerTitleSb.append(",");
 				}
 			}
-			bw.append(headerTitleSB);
+			bw.append(headerTitleSb);
 			bw.newLine();
 					
 			//添加数据行
 		    for(int i=0; i<dataArray.size(); i++){
-		    	StringBuffer dataSB=new StringBuffer();
+		    	StringBuffer datasb=new StringBuffer();
 		    	JSONObject jsonObj=(JSONObject)dataArray.get(i);
 				for(int j=0 ;j<headerArray.length; j++){
 					String header=headerArray[j];
 					//替换掉所有空格
 					String dataValue=jsonObj.getString(header);
-					dataSB.append("\"").append(dataValue).append("\"");
+					datasb.append("\"").append(dataValue).append("\"");
 					if(j<headerArray.length-1){
-						dataSB.append(",");
+						datasb.append(",");
 					}
 				}
-				bw.append(dataSB);
+				bw.append(datasb);
 				if(i<dataArray.size()-1){
 					bw.newLine();
 				}
@@ -87,21 +96,21 @@ public class CsvUtil {
 			if (bw != null) {
 				try {
 					bw.close();
-				} catch (IOException e) {
+                } catch (IOException e) {
 					log.error("BufferedWriter Close Err.", e);
 				}
 			}
 			if (osw != null) {
 				try {
 					osw.close();
-				} catch (IOException e) {
+                } catch (IOException e) {
 					log.error("OutputStreamWriter Close Err.", e);
 				}
 			}
 			if (out != null) {
 				try {
 					out.close();
-				} catch (IOException e) {
+                } catch (IOException e) {
 					log.error("FileOutputStream Close Err.", e);
 				}
 			}
@@ -110,13 +119,14 @@ public class CsvUtil {
 
 	/**
 	 * 读取CSV文件
+	 * @param file CSV文件(路径+文件)
 	 */
 	public static List<String> csvDataToList(File file) {
 		List<String> dataList = new ArrayList<>();
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(new FileReader(file));
-            String line;
+			String line;
 			while ((line = br.readLine()) != null) {
 				dataList.add(line);
 			}
@@ -126,7 +136,7 @@ public class CsvUtil {
 			if (br != null) {
 				try {
 					br.close();
-				} catch (IOException e) {
+                } catch (IOException e) {
 					log.error("BufferedReader Close Err.", e);
 				}
 			}
@@ -137,6 +147,7 @@ public class CsvUtil {
 	
 	/**
 	 * 读取CSV文件的Title
+	 * @param file 文件
 	 */
 	public static List<String> readCsvTitle(File file, boolean isTrim){
 		List<String> titleList =null;
@@ -145,7 +156,7 @@ public class CsvUtil {
 			if(!OsTool.isNull(dataList)){
 				String titles=dataList.get(0);
 				String[] titleArray=titles.split(",");
-				titleList=new ArrayList<>();
+				titleList= new ArrayList<>();
 				for(String title : titleArray){
 					if(isTrim){
 						title=OsTool.trimAll(title);
@@ -162,13 +173,14 @@ public class CsvUtil {
 	
 	/**
 	 * 转换CSV文件为List<Map>
+	 * @param file 文件名
 	 */
 	public static List<Map<String,String>> csvDataToListMap(File file, boolean isTrim) {
 		List<Map<String,String>> titleMapList=null;
 		try{
 			List<String> dataList=csvDataToList(file);
 			if(!OsTool.isNull(dataList) && dataList.size()>1){
-				titleMapList=new ArrayList<>();
+				titleMapList= new ArrayList<>();
 				String[] titleArray=null;
 				for(int i=0; i<dataList.size(); i++){
 					String[] dataArray=dataList.get(i).split(",");
@@ -177,7 +189,7 @@ public class CsvUtil {
 						continue;
 					}
 					//开始封装数据
-					Map<String,String> dataMap=new HashMap<>(16);
+					Map<String,String> dataMap= new HashMap<>(16);
 					for(int index=0; index<titleArray.length; index++){
 						String key=titleArray[index];
 						String value=dataArray[index];
@@ -201,8 +213,7 @@ public class CsvUtil {
 	 * 去除字符串的前后"
 	 */
 	private static String clearPrfSub(String str){
-	    String pref="\"";
-		if(null!=str && str.startsWith(pref) && str.endsWith(pref)){
+		if(null!=str && str.startsWith("\"") && str.endsWith("\"")){
 			str=str.substring(1, str.length()-1);
 		}
 		return str;
